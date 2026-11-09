@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chemical Engineering Class 2</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body { font-family: "Segoe UI", sans-serif; }
+    .page { display: none; min-height: 100vh; }
+    .page.is-active { display: block; }
+
+    /* Login page */
+    #login-page {
+      position: relative;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      color: #fff;
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1350&q=80') center / cover fixed;
+    }
+    #login-page.is-active { display: flex; }
+    .login-overlay { position: absolute; inset: 0; background: rgba(0, 0, 0, .6); }
+    .login-card {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 400px);
+      padding: 40px;
+      border-radius: 20px;
+      background: rgba(34, 49, 34, .6);
+      box-shadow: 0 0 20px rgba(0, 255, 127, .3);
+      backdrop-filter: blur(8px);
+    }
+    .login-card h1 { margin: 0 0 30px; color: #b2ffb2; font-size: 1.5rem; font-weight: 400; letter-spacing: 1px; text-align: center; }
+    .login-card input {
+      width: 100%; padding: 12px; margin-bottom: 20px; border: 0; border-radius: 10px;
+      background: rgba(255, 255, 255, .1); box-shadow: inset 0 0 5px #a2cffe66; color: #fff; font: inherit;
+    }
+    .login-card input:focus { outline: 0; box-shadow: inset 0 0 10px #b2ffb2aa; }
+    .primary-button { width: 100%; padding: 12px; border: 0; border-radius: 10px; background: #4caf50; color: #fff; cursor: pointer; font: inherit; font-size: 1rem; transition: background .3s ease; }
+    .primary-button:hover { background: #388e3c; }
+    .form-message { min-height: 1.4em; margin-top: 10px; color: #ffb3b3; text-align: center; }
+    .login-footer { margin-top: 20px; color: #ccc; font-size: .75rem; text-align: center; }
+
+    /* Batch page */
+    #batch-page { padding: 50px 30px; color: #fff; background: linear-gradient(to right, #1e3c72, #2a5298); }
+    .batch-container { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 30px; max-width: 1200px; margin: auto; }
+    .batch-text, .batch-image { flex: 1; min-width: 280px; }
+    .batch-header { margin-bottom: 10px; color: #ccc; font-size: 1.4rem; }
+    .batch-title { margin: 0 0 20px; color: #f1c40f; font-size: clamp(2.4rem, 6vw, 3.2rem); font-weight: 800; }
+    .batch-description { margin: 0 0 30px; font-size: 1.2rem; line-height: 1.6; }
+    .batch-social { margin-top: 25px; }
+    .batch-username { margin-top: 10px; font-size: 1.1rem; font-weight: 500; }
+    .batch-line { width: 100px; height: 2px; margin-top: 10px; background: #fff; }
+    .batch-image { position: relative; }
+    .batch-decor { position: absolute; z-index: 0; top: -40px; right: -40px; width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(circle, #8e44ad, #2c3e50); filter: blur(60px); opacity: .4; }
+    .batch-image-wrap { position: relative; z-index: 1; overflow: hidden; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,.3); }
+    .batch-image-wrap img { display: block; width: 100%; height: auto; }
+    #open-batch-modal { width: auto; margin-top: 30px; padding: 12px 28px; border-radius: 8px; background: #27ae60; }
+    #open-batch-modal:hover { background: #2ecc71; }
+    .modal { display: none; position: fixed; z-index: 10; inset: 0; align-items: center; justify-content: center; padding: 24px; background: rgba(0,0,0,.6); }
+    .modal.is-open { display: flex; }
+    .modal-content { width: min(100%, 350px); padding: 30px; border-radius: 10px; background: #fff; color: #000; text-align: center; }
+    .modal-content h2 { margin-top: 0; }
+    .modal-content input { width: 90%; margin-top: 15px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font: inherit; }
+    .modal-content button { width: auto; margin-top: 15px; padding: 10px 20px; border-radius: 5px; background: #2980b9; }
+    .modal-content button:hover { background: #3498db; }
+    .batch-message { min-height: 1.4em; margin: 15px 0 0; font-weight: 700; }
+
+    /* CH2 page */
+    #ch2-page { padding: 40px 20px; color: #fff; background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); line-height: 1.6; }
+    .ch2-title { margin: 0 0 40px; color: #f5f5f5; font-size: clamp(2rem, 6vw, 3rem); text-align: center; text-shadow: 1px 1px 5px rgba(0,0,0,.7); }
+    .subject { max-width: 800px; margin: 30px auto; padding: 20px; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; background: rgba(255,255,255,.05); box-shadow: 0 4px 30px rgba(0,0,0,.2); }
+    .subject h2 { margin: 0; color: #00f0ff; cursor: pointer; font-size: 1.8rem; transition: color .2s ease; }
+    .subject h2:hover { color: #00c6ff; }
+    .chapters, .topics { display: none; margin-top: 15px; padding-left: 20px; animation: fade-in .3s ease-in-out forwards; }
+    .chapters.is-open, .topics.is-open { display: block; }
+    .chapter { margin: 10px 0; padding: 12px 16px; border-radius: 10px; background: rgba(0,255,255,.1); color: #e0ffff; cursor: pointer; transition: background .3s ease; }
+    .chapter:hover { background: rgba(0,255,255,.2); }
+    .topic { margin: 8px 0; padding: 10px 16px; border-radius: 8px; background: rgba(255,255,255,.05); color: #b2fefa; }
+    .topic a { color: #7cf0ff; font-weight: 500; text-decoration: none; }
+    .topic a:hover { color: #fff; text-decoration: underline; }
+    @keyframes fade-in { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 768px) { .batch-container { flex-direction: column; text-align: center; } .batch-line { margin-inline: auto; } .subject h2 { font-size: 1.4rem; } }
+  </style>
+</head>
+<body>
+  <main>
+    <section id="login-page" class="page is-active" aria-label="Login page">
+      <div class="login-overlay"></div>
+      <form class="login-card" id="login-form">
+        <h1>Welcome Kavyraj Atodariya</h1>
+        <input type="text" id="username" placeholder="Username" autocomplete="username" required>
+        <input type="password" id="password" placeholder="Password" autocomplete="current-password" required>
+        <button class="primary-button" type="submit">Login</button>
+        <p class="form-message" id="login-message" aria-live="polite"></p>
+        <div class="login-footer">Forest themed login • Created with ❤️</div>
+      </form>
+    </section>
+
+    <section id="batch-page" class="page" aria-label="Batch selection page">
+      <div class="batch-container">
+        <div class="batch-text">
+          <div class="batch-header">THIS APP IS MADE BY KAVYARAJSINH ATODARIYA</div>
+          <h1 class="batch-title">Chemical Engineering Class 2</h1>
+          <p class="batch-description">This app helps you achieve your goals and prepare effectively for exams.</p>
+          <div class="batch-social">
+            <div>Connect with us: +91 8200549418</div>
+            <div class="batch-username">@kavy_araj1602</div>
+            <div class="batch-line"></div>
+          </div>
+          <button id="open-batch-modal" class="primary-button" type="button">Enter Batch Code</button>
+        </div>
+        <div class="batch-image">
+          <div class="batch-decor"></div>
+          <div class="batch-image-wrap">
+            <img src="https://images.unsplash.com/photo-1600378325043-3fbbfe7f10dc?auto=format&fit=crop&w=800&q=80" alt="Students studying together">
+          </div>
+        </div>
+      </div>
+      <div id="batch-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="batch-modal-title">
+        <div class="modal-content">
+          <h2 id="batch-modal-title">Enter Batch Code</h2>
+          <input type="text" id="batch-input" placeholder="Batch Code" autocomplete="off">
+          <button id="submit-batch-code" type="button">Submit</button>
+          <p id="batch-message" class="batch-message" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="ch2-page" class="page" aria-label="Chemical Engineering Class 2 subjects">
+      <h1 class="ch2-title">Chemical Eng. Class 2</h1>
+      <div class="subject"><h2>Calculus</h2><div class="chapters"><div class="chapter">Tutorial solution</div><div class="topics"><div class="topic"><a href="#">Topic 1</a></div></div></div></div>
+      <div class="subject"><h2>Chemistry</h2><div class="chapters"><div class="chapter">Notes</div><div class="topics"><div class="topic"><a href="#">Topic 1</a></div></div><div class="chapter">Practical solution</div><div class="topics"><div class="topic"><a href="#">Topic 1</a></div></div><div class="chapter">Assignment</div><div class="topics"><div class="topic"><a href="#">Topic 1</a></div></div></div></div>
+      <div class="subject"><h2>BEEE</h2><div class="chapters"><div class="chapter">BEEE notes</div><div class="topics"><div class="topic"><a href="#">Topic 1</a></div></div><div class="chapter">BEEE (EC) practical solution</div><div class="topics"><div class="topic"><a href="#">Topic 1</a></div></div><div class="chapter">BEEE (EE) practical solution</div><div class="topics"><div class="topic"><a href="#">Topic 1</a></div></div><div class="chapter">BEEE assignment solution</div><div class="topics"><div class="topic"><a href="#">Topic 1</a></div></div></div></div>
+      <div class="subject"><h2>BMC</h2><div class="chapters"><div class="chapter">Civil assignment solution</div><div class="topics"><div class="topic"><a href="#">Topic 1</a></div></div><div class="chapter">Civil practical solution</div><div class="topics"><div class="topic"><a href="#">Topic 1</a></div></div><div class="chapter">Civil notes</div><div class="topics"><div class="topic"><a href="#">Topic 1</a></div></div><div class="chapter">Mechanical practical solution</div><div class="topics"><div class="topic"><a href="#">Topic 1</a></div></div><div class="chapter">Mechanical assignment solution</div><div class="topics"><div class="topic"><a href="#">Topic 1</a></div></div><div class="chapter">Mechanical notes</div><div class="topics"><div class="topic"><a href="#">Topic 1</a></div></div></div></div>
+      <div class="subject"><h2>IC</h2><div class="chapters"><div class="chapter">Assignments solution</div><div class="topics"><div class="topic"><a href="#">Topic 1</a></div></div></div></div>
+      <div class="subject"><h2>EXAM PAPER</h2><div class="chapters"><div class="chapter">2020–23</div><div class="topics"></div><div class="chapter">2024–26</div><div class="topics"><div class="topic"><a href="#">Topic 1</a></div></div></div></div>
+    </section>
+  </main>
+
+  <script>
+    const pages = document.querySelectorAll('.page');
+    const showPage = (id) => {
+      pages.forEach((page) => page.classList.toggle('is-active', page.id === id));
+      window.scrollTo(0, 0);
+    };
+
+    document.getElementById('login-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const message = document.getElementById('login-message');
+      if (username === 'Kavyaraj' && password === 'Kavyaraj@2815') {
+        message.style.color = '#a2fca2';
+        message.textContent = 'Login successful ✅';
+        setTimeout(() => showPage('batch-page'), 700);
+      } else {
+        message.style.color = '#ff8080';
+        message.textContent = 'Invalid username or password ❌';
+      }
+    });
+
+    const batchModal = document.getElementById('batch-modal');
+    const batchInput = document.getElementById('batch-input');
+    const batchMessage = document.getElementById('batch-message');
+    const openModal = () => {
+      batchModal.classList.add('is-open');
+      batchModal.setAttribute('aria-hidden', 'false');
+      batchInput.value = '';
+      batchMessage.textContent = '';
+      batchInput.focus();
+    };
+    document.getElementById('open-batch-modal').addEventListener('click', openModal);
+    document.getElementById('submit-batch-code').addEventListener('click', () => {
+      if (batchInput.value.trim().toUpperCase() === 'CH2') {
+        batchMessage.style.color = 'green';
+        batchMessage.textContent = '✓ Batch code verified!';
+        setTimeout(() => { batchModal.classList.remove('is-open'); showPage('ch2-page'); }, 650);
+      } else {
+        batchMessage.style.color = 'red';
+        batchMessage.textContent = '✗ Invalid batch code!';
+      }
+    });
+    batchInput.addEventListener('keydown', (event) => { if (event.key === 'Enter') document.getElementById('submit-batch-code').click(); });
+    batchModal.addEventListener('click', (event) => { if (event.target === batchModal) { batchModal.classList.remove('is-open'); batchModal.setAttribute('aria-hidden', 'true'); } });
+
+    document.querySelectorAll('.subject h2, .chapter').forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        const content = trigger.nextElementSibling;
+        if (content && (content.classList.contains('chapters') || content.classList.contains('topics'))) content.classList.toggle('is-open');
+      });
+    });
+  </script>
+</body>
+</html>
